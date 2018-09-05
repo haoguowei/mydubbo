@@ -1,0 +1,99 @@
+version : "3"
+services :
+        master-provider :
+                image : java:8
+                command : java -jar /webapp.jar
+                environment : 
+                        - service-chain=master
+                volumes :
+                        - ./mydubbo-provider.jar:/webapp.jar
+                ports :
+                        - "20880"
+                networks :
+                        - default
+        master-mid :
+                image : java:8
+                command : java -jar /webapp.jar
+                environment : 
+                        - service-chain=master
+                volumes :
+                        - ./mydubbo-mid.jar:/webapp.jar
+                ports :
+                        - "20880"
+                networks :
+                        - default
+        master-consummer :
+                image : java:8
+                command : java -jar /webapp.jar
+                environment : 
+                        - service-chain=master
+                volumes :
+                        - ./mydubbo-consummer.jar:/webapp.jar
+                ports :
+                        - "20880"
+                        - "8080:8080"
+                networks :
+                        - default
+        dev-provider :
+                image : java:8
+                command : java -jar /webapp.jar
+                environment : 
+                        - service-chain=dev
+                volumes :
+                        - ./mydubbo-provider.jar:/webapp.jar
+                ports :
+                        - "20880"
+                networks :
+                        - default
+        dev-mid :
+                image : java:8
+                command : java -jar /webapp.jar
+                environment : 
+                        - service-chain=dev
+                volumes :
+                        - ./mydubbo-mid.jar:/webapp.jar
+                ports :
+                        - "20880"
+                networks :
+                        - default
+        dev-consummer :
+                image : java:8
+                command : java -jar /webapp.jar
+                environment : 
+                        - service-chain=dev
+                volumes :
+                        - ./mydubbo-consummer.jar:/webapp.jar
+                ports :
+                        - "20880"
+                        - "28080:8080"
+                networks :
+                        - default
+        test-provider :
+                image : java:8
+                command : java -jar /webapp.jar
+                environment : 
+                        - service-chain=test
+                volumes :
+                        - ./mydubbo-provider.jar:/webapp.jar
+                ports :
+                        - "20880"
+                networks :
+                        - default
+        test-consummer :
+                image : java:8
+                command : java -jar /webapp.jar
+                environment : 
+                        - service-chain=test
+                volumes :
+                        - ./mydubbo-consummer.jar:/webapp.jar
+                ports :
+                        - "20880"
+                        - "38080:8080"
+                networks :
+                        - default
+networks :
+        default :
+networks :
+        default :
+            external :
+                name : zkcloud_default
