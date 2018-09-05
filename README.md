@@ -24,3 +24,20 @@
 4. 运行docker
 
         docker-compose up
+        
+5. 访问
+
+        http://localhost:8080
+        
+        http://localhost:28080
+       
+        http://localhost:38080
+ 
+        
+##服务调用情况
+
+    1. master S1 > master S2 > master S3
+    
+    2. dev S1 > dev S2 > dev S3
+    
+    3. test S1 > master S2 > test S3
