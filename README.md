@@ -4,19 +4,23 @@
 
 1. 修改了dubbo源码的ServiceConfig#export#doExportUrlsFor1Protocol
   
-    map.put("service-chain", System.getenv("service-chain"));
+        map.put("service-chain", System.getenv("service-chain"));
    
 2. 注释掉 AbstractClusterInvoker#doSelect
 
-    if (invokers.size() == 1)
-        return invokers.get(0);
+        //if (invokers.size() == 1)
+          //  return invokers.get(0);
             
 3. mydubbo-ext自定义customBalance
 
 
 ##docker运行
-1. mvn clean install
+1. 启动zkcloud
+2. 打包
+    
+        mvn clean install
 
-2. 将jar包cp到doc下
+3. 修改zk配置，将jar包cp到doc下
+4. 运行docker
 
-3. docker-compose up
+        docker-compose up
