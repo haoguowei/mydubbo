@@ -34,6 +34,9 @@ public class CustomLoadBalance implements LoadBalance {
             return null;
         }
         invokers = getCustomInvokers(invokers);
+        if (invokers.isEmpty()) {
+            return null;
+        }
         return doSelect(invokers, url, invocation);
     }
 
@@ -50,17 +53,21 @@ public class CustomLoadBalance implements LoadBalance {
 
         String finalServiceChain = serviceChain;
         List<Invoker<T>> newList = invokers.stream()
-                .filter(v->v.getUrl().getParameter(Constants.SERVICE_CHAIN).equals(finalServiceChain))
+                .filter(v->getServiceChain(v.getUrl()).equals(finalServiceChain))
                 .collect(Collectors.toList());
 
         if (CollectionUtils.isEmpty(newList)){
             newList = invokers.stream()
-                    .filter(v->v.getUrl().getParameter(Constants.SERVICE_CHAIN).equals(Constants.MASTER))
+                    .filter(v->getServiceChain(v.getUrl()).equals(Constants.MASTER))
                     .collect(Collectors.toList());
         }
 
         RpcContext.getContext().setAttachment(Constants.SERVICE_CHAIN, serviceChain);
         return newList;
+    }
+
+    private String getServiceChain(URL url){
+        return StringUtils.isBlank(url.getParameter(Constants.SERVICE_CHAIN)) ? "" : url.getParameter(Constants.SERVICE_CHAIN);
     }
 
 
