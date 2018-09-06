@@ -14,7 +14,6 @@ import org.springframework.context.annotation.ImportResource;
 public class StartConsumer {
 
     public static void main( String[] args ) {
-        SpringApplication application = new SpringApplication(StartConsumer.class);
-        application.run(args);
+        SpringApplication.run(StartConsumer.class, args);
     }
 }

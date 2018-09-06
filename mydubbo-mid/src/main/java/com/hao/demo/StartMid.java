@@ -13,7 +13,7 @@ import org.springframework.context.annotation.ImportResource;
 @SpringBootApplication
 public class StartMid {
     public static void main( String[] args ) {
-        SpringApplication application = new SpringApplication(StartMid.class);
-        application.run(args);
+        SpringApplication.run(StartMid.class, args);
+        while (true){}
     }
 }
