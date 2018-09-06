@@ -6,11 +6,15 @@
        http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
     <dubbo:application name="mydubbo-mid"/>
-    <dubbo:protocol name="dubbo" port="20880"/>
+    <dubbo:protocol name="dubbo" port="20881"/>
     <!--<dubbo:registry protocol="zookeeper" address="172.18.0.4:2181,172.18.0.3:2181,172.18.0.2:2181" />-->
     <dubbo:registry protocol="zookeeper" address="127.0.0.1:32181,127.0.0.1:42181,127.0.0.1:52181" />
 
-    <dubbo:reference id="userInfoService" loadbalance="custom" filter="traceIdFilter" check="false" interface="com.hao.demo.service.UserInfoService"/>
-    <dubbo:service interface="com.hao.demo.service.ProductService" filter="traceIdFilter" ref="productService"/>
+    <!-- 发布服务 -->
+    <dubbo:provider filter="traceIdFilter"/>
+    <dubbo:service interface="com.hao.demo.service.ProductService"  ref="productService"/>
 
+    <!-- 引用服务 -->
+    <dubbo:consumer filter="traceIdFilter" loadbalance="custom"/>
+    <dubbo:reference id="userInfoService" check="false" interface="com.hao.demo.service.UserInfoService"/>
 </beans>

@@ -6,9 +6,11 @@
        http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
     <dubbo:application name="mydubbo-consumer"/>
+
     <!--<dubbo:registry protocol="zookeeper" address="172.18.0.4:2181,172.18.0.3:2181,172.18.0.2:2181" />-->
     <dubbo:registry protocol="zookeeper" address="127.0.0.1:32181,127.0.0.1:42181,127.0.0.1:52181" />
 
-    <dubbo:reference id="productService" loadbalance="custom" filter="traceIdFilter" check="false" interface="com.hao.demo.service.ProductService"/>
-
+    <!-- 引用服务 -->
+    <dubbo:consumer filter="traceIdFilter" loadbalance="custom"/>
+    <dubbo:reference id="productService" check="false" interface="com.hao.demo.service.ProductService"/>
 </beans>
