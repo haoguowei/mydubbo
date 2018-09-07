@@ -1,1 +1,1 @@
-traceIdFilter=com.hao.demo.dubbo.ext.filter.TraceIdFilter
+echoRpcContext=com.hao.demo.dubbo.ext.filter.EchoRpcContextFilter
