@@ -1,27 +1,33 @@
 package com.hao.demo.dubbo.ext.listener;
 
+import com.hao.demo.dubbo.ext.chain.ChainContainer;
+import com.hao.demo.dubbo.ext.commons.Constants;
+import com.hao.demo.dubbo.ext.init.SpringContextUtil;
+
 import org.apache.dubbo.rpc.Exporter;
 import org.apache.dubbo.rpc.ExporterListener;
 import org.apache.dubbo.rpc.RpcException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 
 /**
  * Created by haoguowei. Time 2018/9/6 16:40 Desc
  */
+@Component
 public class CustomExporterListener implements ExporterListener {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public void exported(Exporter<?> exporter) throws RpcException {
-        logger.info("exported>>>>>>>{}", exporter.getInvoker().getUrl().toString());
+        ChainContainer chainContainer = (ChainContainer)SpringContextUtil.getBean("chainContainer");
+        chainContainer.addUrlChain(exporter.getInvoker().getUrl(), System.getProperty(Constants.SERVICE_CHAIN));
     }
 
 
     @Override
     public void unexported(Exporter<?> exporter) {
-        logger.info("unexported>>>>>>>{}", exporter.getInvoker().getUrl().toString());
+        ChainContainer chainContainer = (ChainContainer)SpringContextUtil.getBean("chainContainer");
+        chainContainer.removeUrlChain(exporter.getInvoker().getUrl());
     }
+
+
 }

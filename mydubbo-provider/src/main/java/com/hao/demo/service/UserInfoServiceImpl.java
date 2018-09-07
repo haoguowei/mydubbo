@@ -15,6 +15,6 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     public String getUserName(String name) {
         String traceId = RpcContext.getContext().getAttachment(Constants.TRACE_ID);
-        return System.getenv(Constants.SERVICE_CHAIN) + ">" + name + "==>" + traceId;
+        return System.getProperty(Constants.SERVICE_CHAIN) + ">" + name + "==>" + traceId;
     }
 }

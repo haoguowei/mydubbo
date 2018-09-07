@@ -1,6 +1,8 @@
 package com.hao.demo.dubbo.ext.loadBalance;
 
+import com.hao.demo.dubbo.ext.chain.ChainContainer;
 import com.hao.demo.dubbo.ext.commons.Constants;
+import com.hao.demo.dubbo.ext.init.SpringContextUtil;
 
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.utils.CollectionUtils;
@@ -22,11 +24,12 @@ import java.util.stream.Collectors;
  */
 public class CustomLoadBalance implements LoadBalance {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public static final String NAME = "custom";
 
     private final Random random = new Random();
+
 
     @Override
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) {
@@ -42,32 +45,17 @@ public class CustomLoadBalance implements LoadBalance {
 
 
     private <T> List<Invoker<T>> getCustomInvokers(List<Invoker<T>> invokers) {
-        String traceId = RpcContext.getContext().getAttachment(Constants.TRACE_ID);
-        String serviceChain = RpcContext.getContext().getAttachment(Constants.SERVICE_CHAIN);
+        String requestChain = RpcContext.getContext().getAttachment(Constants.SERVICE_CHAIN);
+        String currentRequestChain = StringUtils.isBlank(requestChain) ? System.getProperty(Constants.SERVICE_CHAIN) : requestChain;
+        logger.info("[mydubbo-ext] CustomLoadBalance.currentRequestChain={};invokers.size={};", currentRequestChain,invokers.size());
 
-        if (StringUtils.isBlank(serviceChain)) {
-            serviceChain = System.getenv(Constants.SERVICE_CHAIN);
+        ChainContainer chainContainer = (ChainContainer)SpringContextUtil.getBean("chainContainer");
+        List<Invoker<T>> list = invokers.stream().filter(v -> chainContainer.getChain(v.getUrl()).equals(currentRequestChain)).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(list)){
+            list = invokers.stream().filter(v -> chainContainer.getChain(v.getUrl()).equals(Constants.MASTER)).collect(Collectors.toList());
         }
-
-        logger.info("[mydubbo-ext] CustomLoadBalance.tranceId={};serviceChain={};invokers={};", traceId, serviceChain,invokers.size());
-
-        String finalServiceChain = serviceChain;
-        List<Invoker<T>> newList = invokers.stream()
-                .filter(v->getServiceChain(v.getUrl()).equals(finalServiceChain))
-                .collect(Collectors.toList());
-
-        if (CollectionUtils.isEmpty(newList)){
-            newList = invokers.stream()
-                    .filter(v->getServiceChain(v.getUrl()).equals(Constants.MASTER))
-                    .collect(Collectors.toList());
-        }
-
-        RpcContext.getContext().setAttachment(Constants.SERVICE_CHAIN, serviceChain);
-        return newList;
-    }
-
-    private String getServiceChain(URL url){
-        return StringUtils.isBlank(url.getParameter(Constants.SERVICE_CHAIN)) ? "" : url.getParameter(Constants.SERVICE_CHAIN);
+        RpcContext.getContext().setAttachment(Constants.SERVICE_CHAIN, currentRequestChain);
+        return list;
     }
 
 
