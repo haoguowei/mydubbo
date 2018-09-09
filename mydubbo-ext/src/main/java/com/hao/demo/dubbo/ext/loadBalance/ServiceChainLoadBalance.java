@@ -22,11 +22,11 @@ import java.util.stream.Collectors;
 /**
  * Created by haoguowei. Time 2018/8/30 18:11 Desc
  */
-public class CustomLoadBalance implements LoadBalance {
+public class ServiceChainLoadBalance implements LoadBalance {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public static final String NAME = "custom";
+    public static final String NAME = "serviceChain";
 
     private final Random random = new Random();
 
@@ -47,7 +47,7 @@ public class CustomLoadBalance implements LoadBalance {
     private <T> List<Invoker<T>> getCustomInvokers(List<Invoker<T>> invokers) {
         String requestChain = RpcContext.getContext().getAttachment(Constants.SERVICE_CHAIN);
         String currentRequestChain = StringUtils.isBlank(requestChain) ? System.getProperty(Constants.SERVICE_CHAIN) : requestChain;
-        logger.info("[mydubbo-ext] CustomLoadBalance.currentRequestChain={};invokers.size={};", currentRequestChain,invokers.size());
+        logger.info("[mydubbo-ext] ServiceChainLoadBalance.currentRequestChain={};invokers.size={};", currentRequestChain,invokers.size());
 
         ChainContainer chainContainer = (ChainContainer)SpringContextUtil.getBean("chainContainer");
         List<Invoker<T>> list = invokers.stream().filter(v -> chainContainer.getChain(v.getUrl()).equals(currentRequestChain)).collect(Collectors.toList());

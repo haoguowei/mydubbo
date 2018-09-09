@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * Created by haoguowei. Time 2018/9/6 16:40 Desc
  */
 @Component
-public class CustomExporterListener implements ExporterListener {
+public class ServerExporterListener implements ExporterListener {
 
     @Override
     public void exported(Exporter<?> exporter) throws RpcException {

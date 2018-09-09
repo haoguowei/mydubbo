@@ -1,1 +1,1 @@
-custom=com.hao.demo.dubbo.ext.loadBalance.CustomLoadBalance
+serviceChain=com.hao.demo.dubbo.ext.loadBalance.ServiceChainLoadBalance

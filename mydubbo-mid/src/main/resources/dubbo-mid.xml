@@ -11,10 +11,10 @@
     <dubbo:registry protocol="zookeeper" address="127.0.0.1:32181,127.0.0.1:42181,127.0.0.1:52181" />
 
     <!-- 发布服务 -->
-    <dubbo:provider filter="echoRpcContext" listener="customListener"/>
+    <dubbo:provider filter="echoRpcContext" listener="serverExporterListener"/>
     <dubbo:service interface="com.hao.demo.service.ProductService"  ref="productService"/>
 
     <!-- 引用服务 -->
-    <dubbo:consumer filter="echoRpcContext" loadbalance="custom"/>
+    <dubbo:consumer filter="echoRpcContext" loadbalance="serviceChain"/>
     <dubbo:reference id="userInfoService" check="false" interface="com.hao.demo.service.UserInfoService"/>
 </beans>
