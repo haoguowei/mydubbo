@@ -6,7 +6,7 @@ import java.io.Serializable;
 /**
  * Created by haoguowei. Time 2018/9/7 15:18 Desc
  */
-public class ChainUrl implements Serializable {
+public class UrlUnique implements Serializable {
 
     private String protocol;
 

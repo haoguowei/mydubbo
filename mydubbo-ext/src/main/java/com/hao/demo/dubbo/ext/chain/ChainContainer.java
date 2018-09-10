@@ -14,13 +14,13 @@ public interface ChainContainer {
      * @param url
      * @param chain
      */
-    void addUrlChain(URL url, String chain);
+    void putUrlWithChain(URL url, String chain);
 
     /**
      * 移除chain信息
      * @param url
      */
-    void removeUrlChain(URL url);
+    void removeUrlWithChain(URL url);
 
     /**
      * 获取chain信息

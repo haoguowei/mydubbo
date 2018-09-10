@@ -21,31 +21,31 @@ public class RedisChainContainer implements ChainContainer {
     private StringRedisTemplate stringRedisTemplate;
 
     @Override
-    public void addUrlChain(URL url, String chain) {
-        String chainUrl = getForProvider(url);
-        logger.info("addUrlChain chainUrl={}, chain={}",chainUrl, chain);
-        stringRedisTemplate.opsForValue().set(chainUrl, chain);
+    public void putUrlWithChain(URL url, String chain) {
+        String urlUnique = getForProvider(url);
+        logger.info("[mydubbo-ext] putUrlWithChain UrlUnique={}, chain={}",urlUnique, chain);
+        stringRedisTemplate.opsForValue().set(urlUnique, chain);
     }
 
 
     @Override
-    public void removeUrlChain(URL url) {
-        String chainUrl = getForProvider(url);
-        logger.info("removeUrlChain chainUrl={}",chainUrl);
-        stringRedisTemplate.delete(chainUrl);
+    public void removeUrlWithChain(URL url) {
+        String urlUnique = getForProvider(url);
+        logger.info("[mydubbo-ext] removeUrlWithChain urlUnique={}",urlUnique);
+        stringRedisTemplate.delete(urlUnique);
     }
 
 
     @Override
     public String getChain(URL url) {
-        String chainUrl = getForConsumer(url);
-        String chain = stringRedisTemplate.opsForValue().get(chainUrl);
-        logger.info("getChain chainUrl={}, chain={}",chainUrl, chain);
+        String urlUnique = getForConsumer(url);
+        String chain = stringRedisTemplate.opsForValue().get(urlUnique);
+        logger.info("[mydubbo-ext] getChain urlUnique={}, chain={}",urlUnique, chain);
         return chain;
     }
 
     public static String getForProvider(URL url){
-        ChainUrl cacheUrl = new ChainUrl();
+        UrlUnique cacheUrl = new UrlUnique();
         cacheUrl.setIp(url.getParameter("bind.ip"));
         cacheUrl.setPort(url.getParameter("bind.port"));
         cacheUrl.setInterfaceName(url.getParameter("interface"));
@@ -54,7 +54,7 @@ public class RedisChainContainer implements ChainContainer {
     }
 
     public static String getForConsumer(URL url){
-        ChainUrl cacheUrl = new ChainUrl();
+        UrlUnique cacheUrl = new UrlUnique();
         cacheUrl.setIp(url.getHost());
         cacheUrl.setPort(String.valueOf(url.getPort()));
         cacheUrl.setInterfaceName(url.getParameter("interface"));
