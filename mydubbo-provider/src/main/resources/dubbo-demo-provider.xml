@@ -7,8 +7,8 @@
 
 <dubbo:application name="mydubbo-provider"/>
     <dubbo:protocol name="dubbo" port="20880" />
-    <dubbo:registry protocol="zookeeper" address="172.18.0.4:2181,172.18.0.3:2181,172.18.0.2:2181" />
-    <!--<dubbo:registry protocol="zookeeper" address="127.0.0.1:32181,127.0.0.1:42181,127.0.0.1:52181" />-->
+    <!--<dubbo:registry protocol="zookeeper" address="172.18.0.4:2181,172.18.0.3:2181,172.18.0.2:2181" />-->
+    <dubbo:registry protocol="zookeeper" address="127.0.0.1:32181,127.0.0.1:42181,127.0.0.1:52181" />
 
     <!-- 发布服务 -->
     <dubbo:provider filter="echoRpcContext" listener="serverExporterListener"/>
