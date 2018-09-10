@@ -30,7 +30,10 @@ public class ServiceChainLoadBalance extends AbstractChainLoadBalance {
         logger.info("[mydubbo-ext] ServiceChainLoadBalance.currentRequestChain={};invokers.size={};", currentRequestChain,invokers.size());
 
         ChainContainer chainContainer = (ChainContainer)SpringContextUtil.getBean("chainContainer");
+
         List<Invoker<T>> list = invokers.stream().filter(v -> chainContainer.getChain(v.getUrl()).equals(currentRequestChain)).collect(Collectors.toList());
+        logger.info("[mydubbo-ext] ServiceChainLoadBalance.list.size={};invokers.size={};", list.size(),invokers.size());
+
         if (CollectionUtils.isEmpty(list)){
             list = invokers.stream().filter(v -> chainContainer.getChain(v.getUrl()).equals(Constants.MASTER)).collect(Collectors.toList());
         }
