@@ -2,10 +2,15 @@ package com.hao.demo.dubbo.ext.chain;
 
 import java.io.Serializable;
 
+import lombok.Data;
+import lombok.ToString;
+
 
 /**
  * Created by haoguowei. Time 2018/9/7 15:18 Desc
  */
+@Data
+@ToString
 public class UrlUnique implements Serializable {
 
     private String protocol;
@@ -18,45 +23,5 @@ public class UrlUnique implements Serializable {
 
     public String format() {
         return protocol + "://" +  ip + ":" + port + "/" + interfaceName;
-    }
-
-
-    public String getProtocol() {
-        return protocol;
-    }
-
-
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
-    }
-
-
-    public String getIp() {
-        return ip;
-    }
-
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-
-    public String getPort() {
-        return port;
-    }
-
-
-    public void setPort(String port) {
-        this.port = port;
-    }
-
-
-    public String getInterfaceName() {
-        return interfaceName;
-    }
-
-
-    public void setInterfaceName(String interfaceName) {
-        this.interfaceName = interfaceName;
     }
 }
