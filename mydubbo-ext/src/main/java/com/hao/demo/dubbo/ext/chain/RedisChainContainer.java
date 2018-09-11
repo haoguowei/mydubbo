@@ -2,6 +2,7 @@ package com.hao.demo.dubbo.ext.chain;
 
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.utils.CollectionUtils;
+import org.apache.dubbo.common.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -82,7 +83,11 @@ public class RedisChainContainer implements ChainContainer {
     @Override
     public synchronized void putChain(URL url, String chain) {
         UrlUnique urlUnique = getForProvider(url);
-        appKey = app_prefix + url.getParameter("application") + "/" + urlUnique.getIp() + ":" + urlUnique.getPort();
+
+        if (StringUtils.isBlank(appKey)) {
+            appKey = app_prefix + url.getParameter("application") + "/" + urlUnique.getIp() + ":" + urlUnique.getPort();
+            deleteChains();
+        }
 
         stringRedisTemplate.opsForHash().put(appKey, urlUnique.format(), chain);
         logger.info("RedisChainContainer.putChain appKey={}, urlHashKey={}, chain={}", appKey, urlUnique.format(), chain);
