@@ -2,6 +2,8 @@ package com.hao.demo.dubbo.ext.chain;
 
 import org.apache.dubbo.common.URL;
 
+import java.util.Map;
+
 
 /**
  * 存储url 和 chain的容器服务
@@ -10,17 +12,23 @@ import org.apache.dubbo.common.URL;
 public interface ChainContainer {
 
     /**
+     * 移除chain信息
+     */
+    void deleteChains();
+
+    /**
+     * 获取所有保存的chain信息
+     *
+     * @return
+     */
+    Map<String, String> getAllChains();
+
+    /**
      * 添加url的chain信息
      * @param url
      * @param chain
      */
-    void putUrlWithChain(URL url, String chain);
-
-    /**
-     * 移除chain信息
-     * @param url
-     */
-    void removeUrlWithChain(URL url);
+    void putChain(URL url, String chain);
 
     /**
      * 获取chain信息

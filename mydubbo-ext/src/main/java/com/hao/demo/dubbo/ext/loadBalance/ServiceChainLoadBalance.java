@@ -37,6 +37,8 @@ public class ServiceChainLoadBalance extends AbstractChainLoadBalance {
         if (CollectionUtils.isEmpty(list)){
             list = invokers.stream().filter(v -> chainContainer.getChain(v.getUrl()).equals(Constants.MASTER)).collect(Collectors.toList());
         }
+
+
         RpcContext.getContext().setAttachment(Constants.SERVICE_CHAIN, currentRequestChain);
         return list;
     }
