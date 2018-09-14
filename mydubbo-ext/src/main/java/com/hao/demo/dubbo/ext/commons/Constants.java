@@ -5,10 +5,10 @@ package com.hao.demo.dubbo.ext.commons;
  */
 public class Constants {
 
-    public static final String SERVICE_CHAIN = "service-chain";
-
-    public static final String TRACE_ID = "tranceId";
+    public static final String CHAIN = "chain";
 
     public static final String MASTER = "master";
+
+    public static final String TRACE_ID = "tranceId";
 
 }

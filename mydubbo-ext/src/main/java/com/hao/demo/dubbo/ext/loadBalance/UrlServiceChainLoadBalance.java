@@ -24,9 +24,9 @@ public class UrlServiceChainLoadBalance extends AbstractChainLoadBalance {
     public static final String NAME = "urlServiceChain";
 
     protected <T> List<Invoker<T>> filterInvokers(List<Invoker<T>> invokers) {
-        String serviceChain = RpcContext.getContext().getAttachment(Constants.SERVICE_CHAIN);
+        String serviceChain = RpcContext.getContext().getAttachment(Constants.CHAIN);
         if (StringUtils.isBlank(serviceChain)) {
-            serviceChain = System.getenv(Constants.SERVICE_CHAIN);
+            serviceChain = System.getenv(Constants.CHAIN);
         }
 
         logger.info("[mydubbo-ext] UrlServiceChainLoadBalance.serviceChain={};invokers={};", serviceChain,invokers.size());
@@ -42,12 +42,12 @@ public class UrlServiceChainLoadBalance extends AbstractChainLoadBalance {
                     .collect(Collectors.toList());
         }
 
-        RpcContext.getContext().setAttachment(Constants.SERVICE_CHAIN, serviceChain);
+        RpcContext.getContext().setAttachment(Constants.CHAIN, serviceChain);
         return newList;
     }
 
     private String getServiceChain(URL url){
-        return StringUtils.isBlank(url.getParameter(Constants.SERVICE_CHAIN)) ? "" : url.getParameter(Constants.SERVICE_CHAIN);
+        return StringUtils.isBlank(url.getParameter(Constants.CHAIN)) ? "" : url.getParameter(Constants.CHAIN);
     }
 
 }

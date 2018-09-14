@@ -1,2 +1,2 @@
-serviceChain=com.hao.demo.dubbo.ext.loadBalance.ServiceChainLoadBalance
-urlServiceChain=com.hao.demo.dubbo.ext.loadBalance.UrlServiceChainLoadBalance
+chain=com.hao.demo.dubbo.ext.loadBalance.ServiceChainLoadBalance
+urlChain=com.hao.demo.dubbo.ext.loadBalance.UrlServiceChainLoadBalance

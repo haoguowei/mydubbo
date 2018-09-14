@@ -19,7 +19,7 @@ public class ServerExporterListener implements ExporterListener {
     @Override
     public void exported(Exporter<?> exporter) throws RpcException {
         ChainContainer chainContainer = (ChainContainer)SpringContextUtil.getBean("chainContainer");
-        chainContainer.putChain(exporter.getInvoker().getUrl(), System.getProperty(Constants.SERVICE_CHAIN));
+        chainContainer.putChain(exporter.getInvoker().getUrl(), System.getProperty(Constants.CHAIN));
     }
 
 

@@ -28,7 +28,7 @@ public class TestController {
     String home(){
 
         String name = "liudehua";
-        String res =  System.getProperty(Constants.SERVICE_CHAIN) + ">" + productService.getProductName(name);
+        String res = System.getProperty(Constants.CHAIN) + ">" + productService.getProductName(name);
         return res;
     }
 }

@@ -18,8 +18,8 @@ public class ChainHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String chain = StringUtils.isBlank(request.getParameter("chain")) ? System.getProperty(Constants.SERVICE_CHAIN) : request.getParameter("chain");
-        RpcContext.getContext().setAttachment(Constants.SERVICE_CHAIN, chain);
+        String chain = StringUtils.isBlank(request.getParameter("chain")) ? System.getProperty(Constants.CHAIN) : request.getParameter("chain");
+        RpcContext.getContext().setAttachment(Constants.CHAIN, chain);
         return true;
     }
 

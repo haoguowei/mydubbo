@@ -23,6 +23,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public String getProductName(String s) {
-        return System.getProperty(Constants.SERVICE_CHAIN) + ">" + userInfoService.getUserName(s);
+        return System.getProperty(Constants.CHAIN) + ">" + userInfoService.getUserName(s);
     }
 }

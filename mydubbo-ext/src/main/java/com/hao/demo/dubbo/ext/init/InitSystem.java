@@ -19,8 +19,8 @@ public class InitSystem implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        String env = StringUtils.isBlank(System.getenv(Constants.SERVICE_CHAIN)) ? "local" : System.getenv(Constants.SERVICE_CHAIN);
-        System.setProperty(Constants.SERVICE_CHAIN, env);
+        String env = StringUtils.isBlank(System.getenv(Constants.CHAIN)) ? "local" : System.getenv(Constants.CHAIN);
+        System.setProperty(Constants.CHAIN, env);
         logger.info("[mydubbo-ext] Server Inited! Current Service Chain : {}", env);
     }
 }
