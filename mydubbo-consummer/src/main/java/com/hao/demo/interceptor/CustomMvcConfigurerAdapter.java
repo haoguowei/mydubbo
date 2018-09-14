@@ -14,6 +14,7 @@ public class CustomMvcConfigurerAdapter extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new TraceIdHandlerInterceptor());
+        registry.addInterceptor(new ChainHandlerInterceptor());
         super.addInterceptors(registry);
     }
 }

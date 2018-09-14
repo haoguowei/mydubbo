@@ -5,7 +5,6 @@ import com.hao.demo.dubbo.ext.commons.Constants;
 import com.hao.demo.dubbo.ext.init.SpringContextUtil;
 
 import org.apache.dubbo.common.utils.CollectionUtils;
-import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.RpcContext;
 import org.slf4j.Logger;
@@ -25,23 +24,30 @@ public class ServiceChainLoadBalance extends AbstractChainLoadBalance {
     public static final String NAME = "serviceChain";
 
     protected  <T> List<Invoker<T>> filterInvokers(List<Invoker<T>> invokers) {
-        String requestChain = RpcContext.getContext().getAttachment(Constants.SERVICE_CHAIN);
-        String currentRequestChain = StringUtils.isBlank(requestChain) ? System.getProperty(Constants.SERVICE_CHAIN) : requestChain;
-        logger.info("[mydubbo-ext] ServiceChainLoadBalance.currentRequestChain={};invokers.size={};", currentRequestChain,invokers.size());
-
         ChainContainer chainContainer = (ChainContainer)SpringContextUtil.getBean("chainContainer");
 
-        List<Invoker<T>> list = invokers.stream().filter(v -> chainContainer.getChain(v.getUrl()).equals(currentRequestChain)).collect(Collectors.toList());
-        logger.info("[mydubbo-ext] ServiceChainLoadBalance.list.size={};invokers.size={};", list.size(),invokers.size());
+        //获取当前调用链
+        String chain = RpcContext.getContext().getAttachment(Constants.SERVICE_CHAIN);
+        logger.info("[mydubbo-ext] ServiceChainLoadBalance.chain={};invokers.size={};", chain, invokers.size());
 
+        List<Invoker<T>> list = invokers.stream().filter(v -> chainContainer.getChain(v.getUrl()).equals(chain)).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(list)){
             list = invokers.stream().filter(v -> chainContainer.getChain(v.getUrl()).equals(Constants.MASTER)).collect(Collectors.toList());
         }
 
-
-        RpcContext.getContext().setAttachment(Constants.SERVICE_CHAIN, currentRequestChain);
+        RpcContext.getContext().setAttachment(Constants.SERVICE_CHAIN, chain);
+        logger.info("[mydubbo-ext] ServiceChainLoadBalance.list.currentChain={}; invoke.urls={};", chain, getEchoUrlInfo(list));
         return list;
     }
 
+
+    private <T> String getEchoUrlInfo(List<Invoker<T>> invokers) {
+        if (CollectionUtils.isEmpty(invokers)) {
+            return "";
+        }
+        StringBuffer sbr = new StringBuffer();
+        invokers.forEach(v -> sbr.append(v.getUrl()).append(">><<"));
+        return sbr.toString();
+    }
 
 }
