@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.concurrent.CountDownLatch;
 
 
 /**
@@ -19,15 +20,14 @@ public class AppTest
      * Rigorous Test :-)
      */
     @Test
-    public void shouldAnswerWithTrue()
-    {
+    public void shouldAnswerWithTrue() throws InterruptedException {
+        CountDownLatch countDownLatch = new CountDownLatch(10);
         for (int i = 0; i < 10; i++) {
             int finalI = i;
             new Thread(() -> {
                 HttpClient client = new DefaultHttpClient();
-                HttpGet request = new HttpGet("http://localhost:8080/");
-                //                                HttpGet request = new HttpGet("http://localhost:28080/");
-                //                HttpGet request = new HttpGet("http://localhost:38080/");
+                //                HttpGet request = new HttpGet("http://localhost:8080/?chain=test"); //master>test>刘德华
+                HttpGet request = new HttpGet("http://localhost:8080/?chain=master");//master>master>刘德华
 
                 HttpResponse response = null;
                 try {
@@ -41,13 +41,12 @@ public class AppTest
                         result.append(line);
                     }
                     System.out.println(finalI + ">>>>>>" + result.toString());
+                    countDownLatch.countDown();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }).start();
         }
-        while (true) {
-
-        }
+        countDownLatch.await();
     }
 }

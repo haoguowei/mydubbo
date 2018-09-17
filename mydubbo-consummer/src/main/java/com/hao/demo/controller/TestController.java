@@ -26,8 +26,7 @@ public class TestController {
     @RequestMapping("/")
     @ResponseBody
     String home(){
-
-        String name = "liudehua";
+        String name = "刘德华";
         String res = System.getProperty(Constants.CHAIN) + ">" + productService.getProductName(name);
         return res;
     }

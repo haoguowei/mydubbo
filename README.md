@@ -36,8 +36,15 @@
         
 ##服务调用情况
 
-    1. master S1 > master S2 > master S3
-    
-    2. dev S1 > dev S2 > dev S3
-    
-    3. test S1 > master S2 > test S3
+http://localhost:8080/?chain=master
+master --> master --> master 
+
+http://localhost:8080/?chain=dev
+master --> master --> dev
+master --> dev --> master
+dev --> master --> master
+
+master --> dev --> dev
+dev --> master --> dev
+dev --> dev --> master
+dev --> dev --> dev
