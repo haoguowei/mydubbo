@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 
 /**
@@ -86,7 +87,7 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
 
                 zk.delete(appKey, -1);
             }
-            logger.info("RedisChainContainer.deleteChains appKey={}", appKey);
+            logger.info("zookeeper client deleted appKey : {}", appKey);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -113,7 +114,7 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
         try {
             if (zk.exists(rootPath, false) == null) {
                 String rootNode = zk.create(rootPath, rootPath.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-                logger.info("createed rootNode={}", rootNode);
+                logger.info("zookeeper client created rootNode : {}", rootNode);
             }
 
             UrlUnique urlUnique = getForProvider(url);
@@ -124,17 +125,16 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
 
             if (zk.exists(appKey, false) == null) {
                 String appKeyNode = zk.create(appKey, appKey.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-                logger.info("createed appKeyNode={}", appKeyNode);
+                logger.info("zookeeper client created appKeyNode : {}", appKeyNode);
             }
 
             String tmp = appKey + "/" + urlUnique.format();
             if (zk.exists(tmp, false) == null) {
                 String urlNode = zk.create(tmp, chain.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
-                logger.info("createed urlNode={}", urlNode);
+                logger.info("zookeeper client created urlNode : {}", urlNode);
             }
 
-            logger.info("ZookeeperChainContainer.putChain app={}, key={}, chain={}", appKey, tmp, chain);
-
+            logger.info("zookeeper client putChain app={}, key={}, chain={}", appKey, tmp, chain);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -203,4 +203,14 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
         }
     }
 
+
+    @PreDestroy
+    public void destory() {
+        try {
+            zk.close();
+            logger.info("zookeeper client closed!");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }
