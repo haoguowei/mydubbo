@@ -22,6 +22,6 @@ public class UrlUnique implements Serializable {
     private String interfaceName;
 
     public String format() {
-        return protocol + "://" +  ip + ":" + port + "/" + interfaceName;
+        return protocol + "_" + ip + "_" + port + "_" + interfaceName;
     }
 }

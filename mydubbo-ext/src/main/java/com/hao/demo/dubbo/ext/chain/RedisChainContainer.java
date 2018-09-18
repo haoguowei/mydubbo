@@ -23,7 +23,7 @@ import javax.annotation.Resource;
  *        URL -> chain
  *
  */
-@Component("chainContainer")
+@Component("redisChainContainer")
 public class RedisChainContainer implements ChainContainer {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -85,14 +85,12 @@ public class RedisChainContainer implements ChainContainer {
         UrlUnique urlUnique = getForProvider(url);
 
         if (StringUtils.isBlank(appKey)) {
-            appKey = app_prefix + url.getParameter("application") + "/" + urlUnique.getIp() + ":" + urlUnique.getPort();
+            appKey = app_prefix + url.getParameter("application") + "_" + urlUnique.getIp() + ":" + urlUnique.getPort();
             deleteChains();
         }
 
         stringRedisTemplate.opsForHash().put(appKey, urlUnique.format(), chain);
         logger.info("RedisChainContainer.putChain appKey={}, urlHashKey={}, chain={}", appKey, urlUnique.format(), chain);
-
-        getAllChains();
     }
 
 
@@ -100,8 +98,6 @@ public class RedisChainContainer implements ChainContainer {
     public String getChain(URL url) {
         UrlUnique urlUnique = getForConsumer(url);
         Map<String, String> chainsMap = getAllChains();
-        String chain = chainsMap.get(urlUnique.format());
-        logger.info("RedisChainContainer.getChain,urlUnique={}; chain={}", urlUnique.format(), chain);
-        return chain;
+        return chainsMap.get(urlUnique.format());
     }
 }
