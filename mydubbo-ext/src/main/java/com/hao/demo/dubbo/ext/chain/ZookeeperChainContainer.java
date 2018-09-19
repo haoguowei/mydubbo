@@ -9,6 +9,7 @@ import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -36,6 +37,9 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
     private String appKey = "";
 
     private ZooKeeper zk = null;
+
+    @Value("${zookeeper.address}")
+    private String zookeeperAddress;
 
 
     public static UrlUnique getForConsumer(URL url) {
@@ -194,12 +198,10 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
 
     @PostConstruct
     public void init() {
-        if (zk == null) {
-            try {
-                zk = new ZooKeeper("127.0.0.1:2181", 30000, watchedEvent -> logger.info("zookeeper connected!"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            zk = new ZooKeeper(zookeeperAddress, 30000, watchedEvent -> logger.info("zookeeper connected! zookeeperAddress={}", zookeeperAddress));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

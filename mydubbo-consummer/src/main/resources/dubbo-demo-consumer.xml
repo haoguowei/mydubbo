@@ -6,7 +6,7 @@
        http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
     <dubbo:application name="mydubbo-consumer"/>
-    <dubbo:registry protocol="zookeeper" address="127.0.0.1:2181"/>
+    <dubbo:registry protocol="zookeeper" address="@zookeeper.address@"/>
 
     <!-- 引用服务 -->
     <dubbo:consumer filter="echoRpcContext" loadbalance="chain"/>

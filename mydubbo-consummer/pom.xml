@@ -68,18 +68,12 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
-                <includes>
-                    <include>**/*.properties</include>
-                </includes>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>false</filtering>
-                <includes>
-                    <include>**/*.xml</include>
-                </includes>
             </resource>
         </resources>
+
+        <filters>
+            <filter>src/main/resources/filters/local.properties</filter>
+        </filters>
 
         <plugins>
             <!-- Package as an executable jar -->
