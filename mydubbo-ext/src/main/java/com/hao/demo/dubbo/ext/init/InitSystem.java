@@ -19,6 +19,7 @@ public class InitSystem implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        logger.info("========= InitSystem =========");
         String env = StringUtils.isBlank(System.getenv(Constants.CHAIN)) ? "local" : System.getenv(Constants.CHAIN);
         System.setProperty(Constants.CHAIN, env);
         logger.info("[mydubbo-ext] Server Inited! Current Service Chain : {}", env);

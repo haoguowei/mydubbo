@@ -35,9 +35,9 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private String rootPath = "/ext";
+    private String EXT_PATH = "/ext";
 
-    private String appKey = "";
+    private String APP_PATH = "";
 
     private ZooKeeper zk = null;
 
@@ -67,17 +67,17 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
 
     @Override
     public synchronized void deleteChains() {
-        if (StringUtils.isBlank(appKey)) {
+        if (StringUtils.isBlank(APP_PATH)) {
             return;
         }
         try {
-            if (zk.exists(appKey, false) != null) {
+            if (zk.exists(APP_PATH, false) != null) {
                 try {
-                    List<String> list = zk.getChildren(appKey, null);
+                    List<String> list = zk.getChildren(APP_PATH, null);
                     if (CollectionUtils.isNotEmpty(list)) {
-                        list.forEach(str -> {
+                        list.forEach(urlNodeName -> {
                             try {
-                                zk.delete(appKey + "/" + str, -1);
+                                zk.delete(APP_PATH + "/" + urlNodeName, -1);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             } catch (KeeperException e) {
@@ -92,9 +92,9 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
                 }
 
 
-                zk.delete(appKey, -1);
+                zk.delete(APP_PATH, -1);
             }
-            logger.info("zookeeper client deleted appKey : {}", appKey);
+            logger.info("[mydubbo-ext] zookeeper client deleted APP_PATH : {}", APP_PATH);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -104,7 +104,7 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
     @Override
     public Map<String, String> getAllChains() {
         Map<String, String> map = new HashMap<>();
-        ZookeeperNode zkNode = getNodeTree(rootPath);
+        ZookeeperNode zkNode = getNodeTree(EXT_PATH);
         if (CollectionUtils.isNotEmpty(zkNode.getChildren())) {
             zkNode.getChildren().forEach(node -> {
                 if (CollectionUtils.isNotEmpty(node.getChildren())) {
@@ -119,29 +119,29 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
     @Override
     public synchronized void putChain(URL url, String chain) {
         try {
-            if (zk.exists(rootPath, false) == null) {
-                String rootNode = zk.create(rootPath, rootPath.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-                logger.info("zookeeper client created rootNode : {}", rootNode);
+            if (zk.exists(EXT_PATH, false) == null) {
+                String rootNode = zk.create(EXT_PATH, EXT_PATH.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                logger.info("[mydubbo-ext] zookeeper client created rootNode : {}", rootNode);
             }
 
             ChainUnique urlUnique = getForProvider(url);
-            if (StringUtils.isBlank(appKey)) {
-                appKey = rootPath + "/" + url.getParameter("application") + "_" + urlUnique.getIp() + "_" + urlUnique.getPort();
+            if (StringUtils.isBlank(APP_PATH)) {
+                APP_PATH = EXT_PATH + "/" + url.getParameter("application") + "_" + urlUnique.getIp() + "_" + urlUnique.getPort();
                 deleteChains();
             }
 
-            if (zk.exists(appKey, false) == null) {
-                String appKeyNode = zk.create(appKey, appKey.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-                logger.info("zookeeper client created appKeyNode : {}", appKeyNode);
+            if (zk.exists(APP_PATH, false) == null) {
+                String appKeyNode = zk.create(APP_PATH, APP_PATH.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                logger.info("[mydubbo-ext] zookeeper client created appKeyNode : {}", appKeyNode);
             }
 
-            String tmp = appKey + "/" + urlUnique.format();
+            String tmp = APP_PATH + "/" + urlUnique.format();
             if (zk.exists(tmp, false) == null) {
                 String urlNode = zk.create(tmp, chain.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
-                logger.info("zookeeper client created urlNode : {}", urlNode);
+                logger.info("[mydubbo-ext] zookeeper client created urlNode : {}", urlNode);
             }
 
-            logger.info("zookeeper client putChain app={}, key={}, chain={}", appKey, tmp, chain);
+            logger.info("[mydubbo-ext] zookeeper client putChain app={}, key={}, chain={}", APP_PATH, tmp, chain);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -151,8 +151,18 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
     @Override
     public String getChain(URL url) {
         ChainUnique urlUnique = getForConsumer(url);
-        Map<String, String> map = getAllChains();
-        return map.get(urlUnique.format());
+        return getAllChains().get(urlUnique.format());
+    }
+
+
+    @PreDestroy
+    public void destory() {
+        try {
+            zk.close();
+            logger.info("[mydubbo-ext] zookeeper client closed!");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -166,7 +176,7 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
 
             for (String str : list) {
                 String tmpNode = node + (node.endsWith("/") ? "" : "/") + str;
-                ZookeeperNode tmp = new ZookeeperNode(str, getValue(tmpNode));
+                ZookeeperNode tmp = new ZookeeperNode(str, getNodeValue(tmpNode));
                 tmp.setChildren(getChilrenNodes(tmpNode));
                 children.add(tmp);
             }
@@ -181,15 +191,15 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
 
     @Override
     public ZookeeperNode getNodeTree(String rootNode) {
-        ZookeeperNode root = new ZookeeperNode(rootNode, getValue(rootNode));
+        ZookeeperNode root = new ZookeeperNode(rootNode, getNodeValue(rootNode));
         root.setChildren(getChilrenNodes(rootNode));
         return root;
     }
 
 
-    private String getValue(String path) {
+    private String getNodeValue(String nodePath) {
         try {
-            return new String(zk.getData(path, watchedEvent -> logger.info("zookeeper get path value, path=", path), null));
+            return new String(zk.getData(nodePath, watchedEvent -> logger.info("[mydubbo-ext] zookeeper get node value, nodePath=", nodePath), null));
         } catch (KeeperException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -202,19 +212,8 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
     @PostConstruct
     public void init() {
         try {
-            zk = new ZooKeeper(zookeeperAddress, 30000, watchedEvent -> logger.info("zookeeper connected! zookeeperAddress={}", zookeeperAddress));
+            zk = new ZooKeeper(zookeeperAddress, 30000, watchedEvent -> logger.info("[mydubbo-ext] zookeeper connected! zookeeperAddress={}", zookeeperAddress));
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    @PreDestroy
-    public void destory() {
-        try {
-            zk.close();
-            logger.info("zookeeper client closed!");
-        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
