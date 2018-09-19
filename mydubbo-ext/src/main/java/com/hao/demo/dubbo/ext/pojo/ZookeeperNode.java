@@ -1,4 +1,4 @@
-package com.hao.demo.dubbo.ext.chain;
+package com.hao.demo.dubbo.ext.pojo;
 
 import java.io.Serializable;
 import java.util.List;
@@ -12,16 +12,16 @@ import lombok.ToString;
  */
 @Data
 @ToString
-public class ZkNode implements Serializable {
+public class ZookeeperNode implements Serializable {
 
     private String name;
 
     private String value;
 
-    private List<ZkNode> children;
+    private List<ZookeeperNode> children;
 
 
-    public ZkNode(String name, String value) {
+    public ZookeeperNode(String name, String value) {
         this.name = name;
         this.value = value;
     }

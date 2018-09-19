@@ -1,4 +1,4 @@
-package com.hao.demo.dubbo.ext.init;
+package com.hao.demo.dubbo.ext.commons;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

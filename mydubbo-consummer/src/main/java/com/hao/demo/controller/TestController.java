@@ -1,9 +1,9 @@
 package com.hao.demo.controller;
 
 import com.hao.demo.dubbo.ext.chain.ChainContainer;
-import com.hao.demo.dubbo.ext.chain.ZkNode;
 import com.hao.demo.dubbo.ext.chain.ZookeeperService;
 import com.hao.demo.dubbo.ext.commons.Constants;
+import com.hao.demo.dubbo.ext.pojo.ZookeeperNode;
 import com.hao.demo.service.ProductService;
 
 import org.slf4j.Logger;
@@ -53,7 +53,7 @@ public class TestController {
 
     @RequestMapping("/zookeeper")
     @ResponseBody
-    ZkNode zookeeper() {
+    ZookeeperNode zookeeper() {
         return zookeeperService.getNodeTree("/");
     }
 }

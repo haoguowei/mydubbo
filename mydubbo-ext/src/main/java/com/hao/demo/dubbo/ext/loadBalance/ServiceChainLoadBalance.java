@@ -2,7 +2,7 @@ package com.hao.demo.dubbo.ext.loadBalance;
 
 import com.hao.demo.dubbo.ext.chain.ChainContainer;
 import com.hao.demo.dubbo.ext.commons.Constants;
-import com.hao.demo.dubbo.ext.init.SpringContextUtil;
+import com.hao.demo.dubbo.ext.commons.SpringContextUtil;
 
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.rpc.Invoker;

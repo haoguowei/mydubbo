@@ -1,5 +1,8 @@
 package com.hao.demo.dubbo.ext.chain;
 
+import com.hao.demo.dubbo.ext.pojo.ChainUnique;
+import com.hao.demo.dubbo.ext.pojo.ZookeeperNode;
+
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.StringUtils;
@@ -42,8 +45,8 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
     private String zookeeperAddress;
 
 
-    public static UrlUnique getForConsumer(URL url) {
-        UrlUnique cacheUrl = new UrlUnique();
+    public static ChainUnique getForConsumer(URL url) {
+        ChainUnique cacheUrl = new ChainUnique();
         cacheUrl.setIp(url.getHost());
         cacheUrl.setPort(String.valueOf(url.getPort()));
         cacheUrl.setInterfaceName(url.getParameter("interface"));
@@ -52,8 +55,8 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
     }
 
 
-    public static UrlUnique getForProvider(URL url) {
-        UrlUnique cacheUrl = new UrlUnique();
+    public static ChainUnique getForProvider(URL url) {
+        ChainUnique cacheUrl = new ChainUnique();
         cacheUrl.setIp(url.getParameter("bind.ip"));
         cacheUrl.setPort(url.getParameter("bind.port"));
         cacheUrl.setInterfaceName(url.getParameter("interface"));
@@ -101,7 +104,7 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
     @Override
     public Map<String, String> getAllChains() {
         Map<String, String> map = new HashMap<>();
-        ZkNode zkNode = getNodeTree(rootPath);
+        ZookeeperNode zkNode = getNodeTree(rootPath);
         if (CollectionUtils.isNotEmpty(zkNode.getChildren())) {
             zkNode.getChildren().forEach(node -> {
                 if (CollectionUtils.isNotEmpty(node.getChildren())) {
@@ -121,7 +124,7 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
                 logger.info("zookeeper client created rootNode : {}", rootNode);
             }
 
-            UrlUnique urlUnique = getForProvider(url);
+            ChainUnique urlUnique = getForProvider(url);
             if (StringUtils.isBlank(appKey)) {
                 appKey = rootPath + "/" + url.getParameter("application") + "_" + urlUnique.getIp() + "_" + urlUnique.getPort();
                 deleteChains();
@@ -147,14 +150,14 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
 
     @Override
     public String getChain(URL url) {
-        UrlUnique urlUnique = getForConsumer(url);
+        ChainUnique urlUnique = getForConsumer(url);
         Map<String, String> map = getAllChains();
         return map.get(urlUnique.format());
     }
 
 
-    private List<ZkNode> getChilrenNodes(String node) {
-        List<ZkNode> children = new ArrayList<>();
+    private List<ZookeeperNode> getChilrenNodes(String node) {
+        List<ZookeeperNode> children = new ArrayList<>();
         try {
             List<String> list = zk.getChildren(node, null);
             if (CollectionUtils.isEmpty(list)) {
@@ -163,7 +166,7 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
 
             for (String str : list) {
                 String tmpNode = node + (node.endsWith("/") ? "" : "/") + str;
-                ZkNode tmp = new ZkNode(str, getValue(tmpNode));
+                ZookeeperNode tmp = new ZookeeperNode(str, getValue(tmpNode));
                 tmp.setChildren(getChilrenNodes(tmpNode));
                 children.add(tmp);
             }
@@ -177,8 +180,8 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
 
 
     @Override
-    public ZkNode getNodeTree(String rootNode) {
-        ZkNode root = new ZkNode(rootNode, getValue(rootNode));
+    public ZookeeperNode getNodeTree(String rootNode) {
+        ZookeeperNode root = new ZookeeperNode(rootNode, getValue(rootNode));
         root.setChildren(getChilrenNodes(rootNode));
         return root;
     }

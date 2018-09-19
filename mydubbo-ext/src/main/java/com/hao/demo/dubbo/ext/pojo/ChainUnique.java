@@ -1,4 +1,4 @@
-package com.hao.demo.dubbo.ext.chain;
+package com.hao.demo.dubbo.ext.pojo;
 
 import java.io.Serializable;
 
@@ -11,7 +11,7 @@ import lombok.ToString;
  */
 @Data
 @ToString
-public class UrlUnique implements Serializable {
+public class ChainUnique implements Serializable {
 
     private String protocol;
 
