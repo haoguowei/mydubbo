@@ -87,6 +87,12 @@
       </dependency>
 
       <dependency>
+        <groupId>com.github.sgroschupf</groupId>
+        <artifactId>zkclient</artifactId>
+        <version>0.1</version>
+      </dependency>
+
+      <dependency>
         <groupId>com.hao.demo</groupId>
         <artifactId>mydubbo-api</artifactId>
         <version>1.0-SNAPSHOT</version>

@@ -41,7 +41,7 @@ public class ZookeeperChainContainer implements ChainContainer, ZookeeperService
 
     private ZooKeeper zk = null;
 
-    @Value("${zookeeper.address}")
+    @Value("${dubbo.zookeeper.address}")
     private String zookeeperAddress;
 
 

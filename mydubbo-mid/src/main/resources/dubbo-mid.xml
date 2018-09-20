@@ -7,13 +7,13 @@
 
     <dubbo:application name="mydubbo-mid"/>
     <dubbo:protocol name="dubbo" port="20881"/>
-    <dubbo:registry protocol="zookeeper" address="@zookeeper.address@"/>
+    <dubbo:registry protocol="zookeeper" address="@dubbo.zookeeper.address@"/>
 
     <!-- 发布服务 -->
     <dubbo:provider filter="echoRpcContext" listener="serverExporterListener"/>
     <dubbo:service interface="com.hao.demo.service.ProductService"  ref="productService"/>
 
     <!-- 引用服务 -->
-    <dubbo:consumer filter="echoRpcContext" loadbalance="chain"/>
+    <dubbo:consumer filter="echoRpcContext" loadbalance="@dubbo.consumer.loadbalance@"/>
     <dubbo:reference id="userInfoService" check="false" interface="com.hao.demo.service.UserInfoService"/>
 </beans>

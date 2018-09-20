@@ -27,7 +27,7 @@ public class AppTest
             new Thread(() -> {
                 HttpClient client = new DefaultHttpClient();
                 //                HttpGet request = new HttpGet("http://localhost:8080/?chain=test"); //master>test>刘德华
-                HttpGet request = new HttpGet("http://localhost:8080/?chain=master");//master>master>刘德华
+                HttpGet request = new HttpGet("http://localhost:28080/?chain=master");//master>master>刘德华
 
                 HttpResponse response = null;
                 try {

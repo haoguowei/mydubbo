@@ -6,9 +6,9 @@
        http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
     <dubbo:application name="mydubbo-consumer"/>
-    <dubbo:registry protocol="zookeeper" address="@zookeeper.address@"/>
+    <dubbo:registry protocol="zookeeper" address="@dubbo.zookeeper.address@"/>
 
     <!-- 引用服务 -->
-    <dubbo:consumer filter="echoRpcContext" loadbalance="chain"/>
+    <dubbo:consumer filter="echoRpcContext" loadbalance="@dubbo.consumer.loadbalance@"/>
     <dubbo:reference id="productService" check="false" interface="com.hao.demo.service.ProductService"/>
 </beans>
